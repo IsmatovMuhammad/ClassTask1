@@ -11,8 +11,11 @@ public class AuthorRepository : IAuthorRepository
     {
         using var conn = Database.Connection();
         conn.Open();
-        var query = $"insert into authors(fullname, country, birthyear)values('{author.FullName}', '{author.Country}', {author.BirthYear})";
+        var query = $"insert into authors(fullname, country, birthyear)values(@fullname, @country, @birthyear)";
         var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("fullname", author.FullName);
+        cmd.Parameters.AddWithValue("country", author.Country);
+        cmd.Parameters.AddWithValue("birthyear", author.BirthYear);
         cmd.ExecuteNonQuery();
         System.Console.WriteLine("Author added!!");
     }
@@ -21,8 +24,9 @@ public class AuthorRepository : IAuthorRepository
     {
         using var conn = Database.Connection();
         conn.Open();
-        var query = $"delete from authors where id = {id}";
+        var query = $"delete from authors where id = @id";
         var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("id", id);
         cmd.ExecuteNonQuery();
         System.Console.WriteLine("Author deleted!!");
     }
@@ -31,8 +35,9 @@ public class AuthorRepository : IAuthorRepository
     {
         using var conn = Database.Connection();
         conn.Open();
-        var query = $"select id, fullname, country, birthyear from authors where id = {id}";
+        var query = $"select id, fullname, country, birthyear from authors where id = @id";
         var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("id", id);
         var data = cmd.ExecuteReader();
         var author = new Author();
         while (data.Read())
@@ -69,8 +74,12 @@ public class AuthorRepository : IAuthorRepository
     {
         using var conn = Database.Connection();
         conn.Open();
-        var query = $"update authors set fullname = '{author.FullName}', country = '{author.Country}', birthyear = {author.BirthYear}";
+        var query = $"update authors set fullname = @fullname, country = @country, birthyear = @birthyear where id = @id";
         var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("fullname", author.FullName);
+        cmd.Parameters.AddWithValue("country", author.Country);
+        cmd.Parameters.AddWithValue("birthyear", author.BirthYear);
+        cmd.Parameters.AddWithValue("id", author.Id);
         cmd.ExecuteNonQuery();
         System.Console.WriteLine("Author updated!!");
     }

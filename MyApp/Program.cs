@@ -7,7 +7,7 @@ using Npgsql.Replication;
 
 var repo = new BookRepository();
 var auth = new AuthorRepository();
-
+var genr = new GenresRepository();
 
 // while (true)
 // {
@@ -24,7 +24,7 @@ var auth = new AuthorRepository();
 //             var books = repo.GetBooks();
 //             foreach (var it in books)
 //             {
-//                 Console.WriteLine(it.Id+" "+it.Title+" "+it.PublishYear+" "+it.TotalCopies);
+//                 Console.WriteLine(it.Id+" "+it.Title+" "+it.PublishedYear+" "+it.TotalCopies);
 //             }
 //             break;
 //         case "2":
@@ -37,7 +37,7 @@ var auth = new AuthorRepository();
 //             var books2 = new Book()
 //             {
 //                 Title = title,
-//                 PublishYear = publish,
+//                 PublishedYear = publish,
 //                 TotalCopies = total
 //             };
 //             repo.AddBook(books2);
@@ -60,7 +60,7 @@ var auth = new AuthorRepository();
 //             {
 //                 Id = id4,
 //                 Title = title4,
-//                 PublishYear = published4,
+//                 PublishedYear = published4,
 //                 TotalCopies = total4
 //             };
 //             repo.UpdateBook(books4);
@@ -69,7 +69,7 @@ var auth = new AuthorRepository();
 //             System.Console.Write("Enter id: ");
 //             var id5 = Convert.ToInt32(Console.ReadLine());
 //             var books5 = repo.GetBook(id5);
-//             System.Console.WriteLine(books5.Id+" "+books5.Title+" "+books5.PublishYear+" "+books5.TotalCopies     );
+//             System.Console.WriteLine(books5.Id+" "+books5.Title+" "+books5.PublishedYear+" "+books5.TotalCopies     );
 //             break;
 //         case "0":
 //         return;
@@ -84,8 +84,12 @@ while (true)
 3. Add Author
 4. Update Author
 5. Delete Author
+6. Add Genre
+7. Delete Genre
+8. Update Genre
+9. Show all Genre
 0. Exist");
-    string a = Console.ReadLine();
+    string a = Console.ReadLine()!;
     switch (a)
     {
         case "1":
@@ -103,9 +107,9 @@ while (true)
             break;
         case "3":
             System.Console.Write("Enter FullName: ");
-            string name3 = Console.ReadLine();
+            string name3 = Console.ReadLine()!;
             System.Console.Write("Enter Country: ");
-            string country3 = Console.ReadLine();
+            string country3 = Console.ReadLine()!;
             System.Console.Write("Enter BirthYear: ");
             int birth3 = Convert.ToInt32(Console.ReadLine());
             Author author3 = new()
@@ -120,9 +124,9 @@ while (true)
             System.Console.Write("Enter id: ");
             int id4 = Convert.ToInt32(Console.ReadLine());
             System.Console.Write("Enter FullName: ");
-            string name4 = Console.ReadLine();
+            string name4 = Console.ReadLine()!;
             System.Console.Write("Enter Country: ");
-            string country4 = Console.ReadLine();
+            string country4 = Console.ReadLine()!;
             System.Console.Write("Enter BirthYear: ");
             int birth4 = Convert.ToInt32(Console.ReadLine());
             Author author4 = new()
@@ -138,6 +142,35 @@ while (true)
             System.Console.Write("Enter id: ");
             int id5 = Convert.ToInt32(Console.ReadLine());
             auth.DeleteAuthor(id5);
+            break;
+        case "6":
+            Console.Write("Name: ");
+            string name6 = Console.ReadLine()!;
+            var genre6 = new Genres()
+            {
+                Name = name6
+            };
+            genr.AddGenre(genre6);
+            break;
+        case "7":
+            Console.Write("Id: ");
+            int id7 = Convert.ToInt32(Console.ReadLine());
+            genr.DeleteGenre(id7);
+            break;
+        case "8":
+            Console.Write("id: ");
+            int id8 = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Name: ");
+            string name8 = Console.ReadLine()!;
+            var genre8 = new Genres()
+            {
+                Id = id8,
+                Name = name8
+            };
+            genr.UpdateGenre(genre8);
+            break;
+        case "9":
+            genr.ShowAll();
             break;
         case "0":
             return;

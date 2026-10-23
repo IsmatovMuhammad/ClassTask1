@@ -12,8 +12,11 @@ public class BookRepository : IBookRepository
         using var conn = Database.Connection();
         conn.Open();
         var query = 
-        $"insert into book(id, title, publishyear, totalCopies)values({book.Id}, '{book.Title}', {book.PublishYear}, {book.TotalCopies})";
+        $"insert into book(title, publishedyear, totalCopies)values(@title, @publishedyear, @totalcopies)";
         var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("title", book.Title);
+        cmd.Parameters.AddWithValue("publishedyear", book.PublishedYear);
+        cmd.Parameters.AddWithValue("totalcopies", book.TotalCopies);
         cmd.ExecuteNonQuery();
         System.Console.WriteLine("Book Added!");
     }
@@ -22,8 +25,9 @@ public class BookRepository : IBookRepository
     {
         using var conn = Database.Connection();
         conn.Open();
-        var query = $"delete from book where id = {id}";
+        var query = $"delete from book where id = @id";
         var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("id", id);
         cmd.ExecuteNonQuery();
         System.Console.WriteLine("Book deleted!");
     }
@@ -32,15 +36,16 @@ public class BookRepository : IBookRepository
     {
         using var conn = Database.Connection();
         conn.Open();
-        var query = $"select id, title, publishyear, totalcopies from books where id = {id}";
+        var query = $"select id, title, publishedyear, totalcopies from books where id = @id";
         var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("id", id);
         var data = cmd.ExecuteReader();
         var book = new Book();
         while (data.Read())
         {
             book.Id = data.GetInt32(0);
             book.Title = data.GetString(1);
-            book.PublishYear = data.GetInt32(2);
+            book.PublishedYear = data.GetInt32(2);
             book.TotalCopies = data.GetInt32(3);
         }
         return book;
@@ -50,7 +55,7 @@ public class BookRepository : IBookRepository
     {
         using var conn = Database.Connection();
         conn.Open();
-        var query = "select id, title, publishyear, totalcopies";
+        var query = "select id, title, publishedyear, totalcopies";
         var cmd = new NpgsqlCommand(query, conn);
         var data = cmd.ExecuteReader();
         var books = new List<Book>();
@@ -59,7 +64,7 @@ public class BookRepository : IBookRepository
             var book = new Book();
             book.Id = data.GetInt32(0);
             book.Title = data.GetString(1);
-            book.PublishYear = data.GetInt32(2);
+            book.PublishedYear = data.GetInt32(2);
             book.TotalCopies = data.GetInt32(3);
             books.Add(book); 
         }
@@ -71,8 +76,11 @@ public class BookRepository : IBookRepository
         using var conn = Database.Connection();
         conn.Open();
         var query = 
-        $"update books set title = '{book.Title}', publishedyear = {book.PublishYear}, totalcopies = {book.TotalCopies}";
+        $"update books set title = @title, publishedyear = @publishedyear, totalcopies = @totalcopies";
         var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("title", book.Title);
+        cmd.Parameters.AddWithValue("publishedyear", book.PublishedYear);
+        cmd.Parameters.AddWithValue("totalcopies", book.TotalCopies);
         cmd.ExecuteNonQuery();
         System.Console.WriteLine("Book updated!");
     }
