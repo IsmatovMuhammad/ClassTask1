@@ -4,9 +4,9 @@ namespace Domain.Interfaces;
 
 public interface IAuthorRepository
 {
-    void AddAuthor(Author author);
-    void UpdateAuthor(Author author);
-    void DeleteAuthor(int id);
-    Author GetAuthor(int id);
-    List<Author> GetAuthors();
+    Task<bool> AddAuthor(Author author);
+    Task<bool> UpdateAuthor(Author author);
+    Task<bool> DeleteAuthor(int id);
+    Task<Author> GetAuthor(int id);
+    Task<List<Author>> GetAuthors();
 }

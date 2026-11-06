@@ -1,87 +1,57 @@
+using Dapper;
 using Domain.Interfaces;
 using Domain.Models;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Npgsql;
 
 namespace Infrastructure.Repositories;
 
-public class AuthorRepository : IAuthorRepository
+public class AuthorRepository(Database database) : IAuthorRepository
 {
-    public void AddAuthor(Author author)
+    private Database data = database;
+    public async Task<bool> AddAuthor(Author author)
     {
-        using var conn = Database.Connection();
+        using var conn = data.Connection();
         conn.Open();
         var query = $"insert into authors(fullname, country, birthyear)values(@fullname, @country, @birthyear)";
-        var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("fullname", author.FullName);
-        cmd.Parameters.AddWithValue("country", author.Country);
-        cmd.Parameters.AddWithValue("birthyear", author.BirthYear);
-        cmd.ExecuteNonQuery();
-        System.Console.WriteLine("Author added!!");
+        var auth = await conn.ExecuteAsync(query, conn);
+        return auth> 0;
     }
 
-    public void DeleteAuthor(int id)
+    public async Task<bool> DeleteAuthor(int id)
     {
-        using var conn = Database.Connection();
+        using var conn = data.Connection();
         conn.Open();
         var query = $"delete from authors where id = @id";
-        var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("id", id);
-        cmd.ExecuteNonQuery();
-        System.Console.WriteLine("Author deleted!!");
+        var auth = await conn.ExecuteAsync(query, conn);
+        return auth>0;
     }
 
-    public Author GetAuthor(int id)
+    public async Task<Author> GetAuthor(int id)
     {
-        using var conn = Database.Connection();
+        using var conn = data.Connection();
         conn.Open();
         var query = $"select id, fullname, country, birthyear from authors where id = @id";
-        var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("id", id);
-        var data = cmd.ExecuteReader();
-        var author = new Author();
-        while (data.Read())
-        {
-            author.Id = data.GetInt32(0);
-            author.FullName = data.GetString(1);
-            author.Country = data.GetString(2);
-            author.BirthYear = data.GetInt32(3);
-        }
-        return author;
+        var auth = await conn.QuerySingleAsync<Author>(query, new{id});
+        return auth;
     }
 
-    public List<Author> GetAuthors()
+    public async Task<List<Author>> GetAuthors()
     {
-        using var conn = Database.Connection();
+        using var conn = data.Connection();
         conn.Open();
         var query = "select * from authors";
-        var cmd = new NpgsqlCommand(query, conn);
-        var data = cmd.ExecuteReader();
-        var authors = new List<Author>();
-        while (data.Read())
-        {
-            Author author = new();
-            author.Id = data.GetInt32(0);
-            author.FullName = data.GetString(1);
-            author.Country = data.GetString(2);
-            author.BirthYear = data.GetInt32(3);
-            authors.Add(author);
-        }
-        return authors;
+        var auth = await conn.QueryAsync<Author>(query, conn);
+        return auth.ToList();
     }
 
-    public void UpdateAuthor(Author author)
+    public async Task<bool> UpdateAuthor(Author author)
     {
-        using var conn = Database.Connection();
+        using var conn = data.Connection();
         conn.Open();
         var query = $"update authors set fullname = @fullname, country = @country, birthyear = @birthyear where id = @id";
-        var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("fullname", author.FullName);
-        cmd.Parameters.AddWithValue("country", author.Country);
-        cmd.Parameters.AddWithValue("birthyear", author.BirthYear);
-        cmd.Parameters.AddWithValue("id", author.Id);
-        cmd.ExecuteNonQuery();
-        System.Console.WriteLine("Author updated!!");
+        var auth = await conn.ExecuteAsync(query, conn);
+        return auth>0;
     }
-
 }

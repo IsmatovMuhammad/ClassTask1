@@ -1,3 +1,4 @@
+using Dapper;
 using Domain.Interfaces;
 using Domain.Models;
 using Infrastructure.Data;
@@ -5,84 +6,54 @@ using Npgsql;
 
 namespace Infrastructure.Repositories;
 
-public class BookRepository : IBookRepository
+public class BookRepository(Database database) : IBookRepository
 {
-    public void AddBook(Book book)
+    private Database data = database;
+
+    public async Task<bool> AddBook(Book book)
     {
-        using var conn = Database.Connection();
+        using var conn = data.Connection();
         conn.Open();
-        var query = 
-        $"insert into book(title, publishedyear, totalCopies)values(@title, @publishedyear, @totalcopies)";
-        var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("title", book.Title);
-        cmd.Parameters.AddWithValue("publishedyear", book.PublishedYear);
-        cmd.Parameters.AddWithValue("totalcopies", book.TotalCopies);
-        cmd.ExecuteNonQuery();
-        System.Console.WriteLine("Book Added!");
+        var query = $"insert into book(title, publishedyear, totalCopies)values(@title, @publishedyear, @totalcopies)";
+
+        var b = await conn.ExecuteAsync(query, conn);
+        return b > 0;
     }
 
-    public void DeleteBook(int id)
+    public async Task<bool> DeleteBook(int id)
     {
-        using var conn = Database.Connection();
+        using var conn = data.Connection();
         conn.Open();
         var query = $"delete from book where id = @id";
-        var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("id", id);
-        cmd.ExecuteNonQuery();
-        System.Console.WriteLine("Book deleted!");
+        var b = await conn.ExecuteAsync(query, new { id });
+        return b > 0;
     }
 
-    public Book GetBook(int id)
+    public async Task<Book> GetBook(int id)
     {
-        using var conn = Database.Connection();
+        using var conn = data.Connection();
         conn.Open();
         var query = $"select id, title, publishedyear, totalcopies from books where id = @id";
-        var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("id", id);
-        var data = cmd.ExecuteReader();
-        var book = new Book();
-        while (data.Read())
-        {
-            book.Id = data.GetInt32(0);
-            book.Title = data.GetString(1);
-            book.PublishedYear = data.GetInt32(2);
-            book.TotalCopies = data.GetInt32(3);
-        }
-        return book;
+        var b = await conn.QuerySingleAsync<Book>(query, new { id });
+        return b;
     }
 
-    public List<Book> GetBooks()
+    public async Task<List<Book>> GetBooks()
     {
-        using var conn = Database.Connection();
+        using var conn = data.Connection();
         conn.Open();
         var query = "select id, title, publishedyear, totalcopies";
-        var cmd = new NpgsqlCommand(query, conn);
-        var data = cmd.ExecuteReader();
-        var books = new List<Book>();
-        while (data.Read())
-        {
-            var book = new Book();
-            book.Id = data.GetInt32(0);
-            book.Title = data.GetString(1);
-            book.PublishedYear = data.GetInt32(2);
-            book.TotalCopies = data.GetInt32(3);
-            books.Add(book); 
-        }
-        return books;
+        var b = await conn.QueryAsync<Book>(query);
+        return b.ToList();
     }
 
-    public void UpdateBook(Book book)
+    public async Task<bool> UpdateBook(Book book)
     {
-        using var conn = Database.Connection();
+        using var conn = data.Connection();
         conn.Open();
-        var query = 
-        $"update books set title = @title, publishedyear = @publishedyear, totalcopies = @totalcopies";
-        var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("title", book.Title);
-        cmd.Parameters.AddWithValue("publishedyear", book.PublishedYear);
-        cmd.Parameters.AddWithValue("totalcopies", book.TotalCopies);
-        cmd.ExecuteNonQuery();
-        System.Console.WriteLine("Book updated!");
+        var query = $"update books set title = @title, publishedyear = @publishedyear, totalcopies = @totalcopies";
+        var b = await conn.ExecuteAsync(query, book);
+        return b > 0;
     }
 
 }

@@ -1,5 +1,6 @@
 using System.Data;
 using System.Security.Cryptography;
+using Dapper;
 using Domain.Interfaces;
 using Domain.Models;
 using Infrastructure.Data;
@@ -8,78 +9,48 @@ using Npgsql;
 
 namespace Infrastructure.Repositories;
 
-public class GenresRepository : IGenresRepository
+public class GenresRepository(Database database) : IGenresRepository
 {
-    public void AddGenre(Genres genre)
+    private Database data = database;
+    public async Task<bool> AddGenre(Genres genre)
     {
-        using var conn = Database.Connection();
-        var sql = "select * from genres";
-        var adapter = new NpgsqlDataAdapter(sql, conn);
-        var ds = new DataSet();
-        adapter.Fill(ds);
-        var builder = new NpgsqlCommandBuilder(adapter);
-        DataTable genresTable = ds.Tables[0];
-        DataRow row = genresTable.NewRow();
-        row["name"] = genre.Name;
-        adapter.Update(ds);
+        using var conn = data.Connection();
+        var query = "select * from genres";
+        var auth = await conn.ExecuteAsync(query, conn);
+        return auth> 0;
     }
 
-    public void DeleteGenre(int id)
+    public async Task<bool> DeleteGenre(int id)
     {
-        using var connection = Database.Connection();
-        var sql = "select * from genres";
-        var adapter = new NpgsqlDataAdapter(sql, connection);
-        var ds = new DataSet();
-        adapter.Fill(ds);
-
-        var builder = new NpgsqlCommandBuilder(adapter);
-
-        DataTable genresTable = ds.Tables[0];
-
-        foreach(DataRow dataRow in genresTable.Rows)
-        {
-            if (Convert.ToInt32(dataRow["id"]) == id)
-            {
-                dataRow.Delete();
-                adapter.Update(ds);
-                break;
-            }
-        }
+        using var conn = data.Connection();
+        var query = "select * from genres";
+        var auth = await conn.ExecuteAsync(query, conn);
+        return auth> 0;
     }
 
-    public void ShowAll()
+    public async Task<Genres> GetGenr(int id)
     {
-        using var conn = Database.Connection();
-        var sql = "select * from genres";
-        var adapter = new NpgsqlDataAdapter(sql, conn);
-        var ds = new DataSet();
-        DataTable genresTable = ds.Tables[0];
-
-        foreach(DataRow dr in genresTable.Rows)
-        {
-            System.Console.WriteLine(dr[0]+" "+dr[1]);
-        }
+        using var conn = data.Connection();
+        var query = "select * from genres";
+        var auth = await conn.QuerySingleAsync<Genres>(query, conn);
+        return auth;
     }
 
-    public void UpdateGenre(Genres genre)
-    {
-        using var conn = Database.Connection();
-        var sql = "select * from genres";
-        var adapter = new NpgsqlDataAdapter(sql, conn);
-        var ds = new DataSet();
-        adapter.Fill(ds);
-        var builder = new NpgsqlCommandBuilder(adapter);
-        DataTable genresTable = ds.Tables[0];
-        foreach (DataRow row in genresTable.Rows)
-        {
-            if(Convert.ToInt32(row["id"]) == genre.Id)
-            {
-                row["name"] = genre.Name;
-                adapter.Update(ds);
-                break;
-            }
 
-        }
+    public async Task<List<Genres>> GetGenres()
+    {
+        using var conn = data.Connection();
+        var query = "select * from genres";
+        var auth = await conn.QueryAsync<Genres>(query, conn);
+        return auth.ToList();
+    }
+
+    public async Task<bool> UpdateGenre(Genres genre)
+    {
+        using var conn = data.Connection();
+        var query = "select * from genres";
+        var auth = await conn.ExecuteAsync(query, conn);
+        return auth> 0;
     }
 
 }
