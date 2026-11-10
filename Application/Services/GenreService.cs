@@ -1,4 +1,5 @@
 using System.Net;
+using Application.DTOs.Genres;
 using Application.Interfaces;
 using Application.Responses;
 using Domain.Interfaces;
@@ -11,12 +12,16 @@ public class GenreService(IGenresRepository genresRepository): IGenreService
 {
     private IGenresRepository repository = genresRepository;
 
-    public async Task<ApiResponse<bool>> AddGenre(Genres genre)
+    public async Task<ApiResponse<bool>> AddGenre(GenresCreateDto genre)
     {
-        var conn = await repository.AddGenre(genre);
-        return conn == true
-        ? new ApiResponse<bool>(HttpStatusCode.OK, "Added !", conn)
-        : new ApiResponse<bool>(HttpStatusCode.InternalServerError, "Not Added !", conn);
+        var genr = new Genres()
+        {
+            Name = genre.Name
+        };
+        var res = await repository.AddGenre(genr);
+        return res == true
+        ? new ApiResponse<bool>(HttpStatusCode.OK, "Genre added !")
+        : new ApiResponse<bool>(HttpStatusCode.InternalServerError, "Genre not added !");
     }
 
     public async Task<ApiResponse<bool>> DeleteGenre(int id)
@@ -27,24 +32,37 @@ public class GenreService(IGenresRepository genresRepository): IGenreService
         : new ApiResponse<bool>(HttpStatusCode.InternalServerError, "Not Deleted !", conn);
     }
 
-    public async Task<ApiResponse<Genres>> GetGenr(int id)
+    public async Task<ApiResponse<GenresResponseDto>> GetGenr(int id)
     {
-        var conn = await repository.GetGenr(id);
-        return new ApiResponse<Genres>(HttpStatusCode.OK, "Genres with given id. ", conn);
+        var genr = await repository.GetGenr(id);
+        var genr1 = new GenresResponseDto()
+        {
+            Name = genr.Name
+        };
+        return new ApiResponse<GenresResponseDto>(HttpStatusCode.OK, "Genre by id. ", genr1);
     }
 
-    public async Task<ApiResponse<List<Genres>>> GetGenres()
+    public async Task<ApiResponse<List<GenresResponseDto>>> GetGenres()
     {
-        var conn = await repository.GetGenres();
-        return new ApiResponse<List<Genres>>(HttpStatusCode.OK, "List of genres", conn);
+        var genr = await repository.GetGenres();
+        var genr1 = genr.Select(s => new GenresResponseDto
+        {
+            Name = s.Name
+        }).ToList();
+        return new ApiResponse<List<GenresResponseDto>>(HttpStatusCode.OK, "List of Genre", genr1);
     }
 
-    public async Task<ApiResponse<bool>> UpdateGenre(Genres genre)
+    public async Task<ApiResponse<bool>> UpdateGenre(int id, GenresUpdateDto genre)
     {
-        var conn = await repository.UpdateGenre(genre);
-        return conn == true
-        ? new ApiResponse<bool>(HttpStatusCode.OK, "Updated !", conn)
-        : new ApiResponse<bool>(HttpStatusCode.InternalServerError, "Not Updated !", conn);
+        var genre1 = new Genres()
+        {
+            Id = id,
+            Name = genre.Name
+        };
+        var genr = await repository.UpdateGenre(genre1);
+        return genr == true
+        ? new ApiResponse<bool>(HttpStatusCode.OK, "Genre updated !", genr)
+        : new ApiResponse<bool>(HttpStatusCode.InternalServerError, "Genre not update"); 
     }
 
 }

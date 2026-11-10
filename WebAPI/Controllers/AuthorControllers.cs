@@ -1,3 +1,4 @@
+using Application.DTOs.Author;
 using Application.Interfaces;
 using Application.Responses;
 using Domain.Models;
@@ -13,13 +14,13 @@ public class AuthorControllers(IAuthorService authorService) : Controller
     private IAuthorService auth = authorService;
     
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<List<Author>>>> GetAuthors()
+    public async Task<ActionResult<ApiResponse<List<AuthorResponseDto>>>> GetAuthors()
     {
         return await auth.GetAuthors();
     }
 
     [HttpPost]
-    public async Task<ActionResult<ApiResponse<bool>>> AddAuthor(Author author)
+    public async Task<ActionResult<ApiResponse<bool>>> AddAuthor(AuthorCreateDto author)
     {
         return await auth.AddAuthor(author);
     }
@@ -31,13 +32,13 @@ public class AuthorControllers(IAuthorService authorService) : Controller
     }
 
     [HttpPut]
-    public async Task<ActionResult<ApiResponse<bool>>> UpdateAuthor(Author author)
+    public async Task<ActionResult<ApiResponse<bool>>> UpdateAuthor(int id, AuthorUpdateDto author)
     {
-        return await auth.UpdateAuthor(author);
+        return await auth.UpdateAuthor(id, author);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ApiResponse<Author>>> GetAuthor(int id)
+    public async Task<ActionResult<ApiResponse<AuthorResponseDto>>> GetAuthor(int id)
     {
         return await auth.GetAuthor(id);
     }

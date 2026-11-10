@@ -1,3 +1,4 @@
+using Application.DTOs.Genres;
 using Application.Interfaces;
 using Application.Responses;
 using Domain.Models;
@@ -12,13 +13,13 @@ public class GenresControllers(IGenreService genreService) : Controller
     private IGenreService service = genreService;
 
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<List<Genres>>>> GetGenres()
+    public async Task<ActionResult<ApiResponse<List<GenresResponseDto>>>> GetGenres()
     {
         return await service.GetGenres();
     }
 
     [HttpPost]
-    public async Task<ActionResult<ApiResponse<bool>>> AddGenres(Genres genres)
+    public async Task<ActionResult<ApiResponse<bool>>> AddGenres(GenresCreateDto genres)
     {
         return await service.AddGenre(genres);
     }
@@ -30,13 +31,13 @@ public class GenresControllers(IGenreService genreService) : Controller
     }
 
     [HttpPut]
-    public async Task<ActionResult<ApiResponse<bool>>> UpdateGenres(Genres genres)
+    public async Task<ActionResult<ApiResponse<bool>>> UpdateGenres(int id, GenresUpdateDto genres)
     {
-        return await service.UpdateGenre(genres);
+        return await service.UpdateGenre(id, genres);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ApiResponse<Genres>>> GetGenr(int id)
+    public async Task<ActionResult<ApiResponse<GenresResponseDto>>> GetGenr(int id)
     {
         return await service.GetGenr(id);
     }

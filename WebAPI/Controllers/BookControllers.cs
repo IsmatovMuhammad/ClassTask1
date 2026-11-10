@@ -1,3 +1,4 @@
+using Application.DTOs.Book;
 using Application.Interfaces;
 using Application.Responses;
 using Domain.Models;
@@ -14,13 +15,13 @@ public class BookControllers(IBookService service) : ControllerBase
     private IBookService book = service;
 
     [HttpGet]
-    public async Task<ActionResult<ApiResponse<List<Book>>>> GetBooks()
+    public async Task<ActionResult<ApiResponse<List<BookResponseDto>>>> GetBooks()
     {
         return await book.GetBooks();
     }
 
     [HttpPost]
-    public async Task<ActionResult<ApiResponse<bool>>> AddBook(Book book1)
+    public async Task<ActionResult<ApiResponse<bool>>> AddBook(BookCreateDto book1)
     {
         return await book.AddBook(book1);
     }
@@ -32,13 +33,13 @@ public class BookControllers(IBookService service) : ControllerBase
     }
 
     [HttpPut]
-    public async Task<ActionResult<ApiResponse<bool>>> UpdateBook(Book book1)
+    public async Task<ActionResult<ApiResponse<bool>>> UpdateBook(int id, BookUpdateDto book1)
     {
-        return await book.UpdateBook(book1);
+        return await book.UpdateBook(id, book1);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<ApiResponse<Book>>> GetBook(int id)
+    public async Task<ActionResult<ApiResponse<BookResponseDto>>> GetBook(int id)
     {
         return await book.GetBook(id);
     }
