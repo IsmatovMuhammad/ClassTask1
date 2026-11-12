@@ -22,7 +22,7 @@ public class AuthorService(IAuthorRepository repository1) : IAuthorService
         };
         var res = await repository.AddAuthor(auth);
         return res == true
-        ? new ApiResponse<bool>(HttpStatusCode.OK, "Authro added !")
+        ? new ApiResponse<bool>(HttpStatusCode.OK, "Authro added !", res)
         : new ApiResponse<bool>(HttpStatusCode.InternalServerError, "Author not added !");
     }
 
@@ -30,7 +30,7 @@ public class AuthorService(IAuthorRepository repository1) : IAuthorService
     {
         var auth = await repository.DeleteAuthor(id);
         return auth == true
-        ? new ApiResponse<bool>(HttpStatusCode.OK, "Author deleted !")
+        ? new ApiResponse<bool>(HttpStatusCode.OK, "Author deleted !",auth)
         : new ApiResponse<bool>(HttpStatusCode.InternalServerError, "Author not deleted !");
     }
 
@@ -39,6 +39,7 @@ public class AuthorService(IAuthorRepository repository1) : IAuthorService
         var auth = await repository.GetAuthor(id);
         var data = new AuthorResponseDto
         {
+            Id = auth.Id,
             FullName = auth.FullName,
             Country = auth.Country,
             BirthYear = auth.BirthYear
@@ -70,7 +71,7 @@ public class AuthorService(IAuthorRepository repository1) : IAuthorService
         };
         var res = await repository.UpdateAuthor(auth);
         return res == true
-        ? new ApiResponse<bool>(HttpStatusCode.OK, "Author updated !")
+        ? new ApiResponse<bool>(HttpStatusCode.OK, "Author updated !", res)
         : new ApiResponse<bool>(HttpStatusCode.InternalServerError, "Author not Updated !");
     }
 

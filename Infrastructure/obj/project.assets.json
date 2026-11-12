@@ -678,8 +678,8 @@
       "Dapper >= 2.1.89",
       "Domain >= 1.0.0",
       "Npgsql >= 10.0.3",
-      "Swashbuckle.AspNetCore.Swagger >= 10.3.1",
-      "swashbuckle.aspnetcore >= 10.3.1"
+      "Swashbuckle.AspNetCore >= 10.3.1",
+      "Swashbuckle.AspNetCore.Swagger >= 10.3.1"
     ]
   },
   "packageFolders": {
@@ -741,11 +741,11 @@
             "target": "Package",
             "version": "[10.0.3, )"
           },
-          "Swashbuckle.AspNetCore.Swagger": {
+          "Swashbuckle.AspNetCore": {
             "target": "Package",
             "version": "[10.3.1, )"
           },
-          "swashbuckle.aspnetcore": {
+          "Swashbuckle.AspNetCore.Swagger": {
             "target": "Package",
             "version": "[10.3.1, )"
           }
@@ -766,7 +766,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.403/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.404/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",

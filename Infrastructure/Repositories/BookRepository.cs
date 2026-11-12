@@ -33,7 +33,7 @@ public class BookRepository(Database database) : IBookRepository
     {
         using var conn = data.Connection();
         conn.Open();
-        var query = $"select id, title, publishedyear, totalcopies from books where id = @id";
+        var query = $"select * from book where id = @id";
         var b = await conn.QuerySingleAsync<Book>(query, new { id });
         return b;
     }
@@ -42,7 +42,7 @@ public class BookRepository(Database database) : IBookRepository
     {
         using var conn = data.Connection();
         conn.Open();
-        var query = "select id, title, publishedyear, totalcopies";
+        var query = "select * from book";
         var b = await conn.QueryAsync<Book>(query);
         return b.ToList();
     }
@@ -51,7 +51,7 @@ public class BookRepository(Database database) : IBookRepository
     {
         using var conn = data.Connection();
         conn.Open();
-        var query = $"update books set title = @title, publishedyear = @publishedyear, totalcopies = @totalcopies";
+        var query = $"update book set title = @title, publishedyear = @publishedyear, totalcopies = @totalcopies where id = @id";
         var b = await conn.ExecuteAsync(query, book);
         return b > 0;
     }

@@ -41,6 +41,7 @@ public class BookService(IBookRepository repository1) : IBookService
         var bo = await repository.GetBook(id);
         var book = new BookResponseDto
         {
+            Id = bo.Id,
             Title = bo.Title,
             PublishedYear = bo.PublishedYear,
             TotalCopies = bo.TotalCopies

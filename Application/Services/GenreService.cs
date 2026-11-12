@@ -37,6 +37,7 @@ public class GenreService(IGenresRepository genresRepository): IGenreService
         var genr = await repository.GetGenr(id);
         var genr1 = new GenresResponseDto()
         {
+            Id = genr.Id,
             Name = genr.Name
         };
         return new ApiResponse<GenresResponseDto>(HttpStatusCode.OK, "Genre by id. ", genr1);
@@ -47,6 +48,7 @@ public class GenreService(IGenresRepository genresRepository): IGenreService
         var genr = await repository.GetGenres();
         var genr1 = genr.Select(s => new GenresResponseDto
         {
+            Id = s.Id,
             Name = s.Name
         }).ToList();
         return new ApiResponse<List<GenresResponseDto>>(HttpStatusCode.OK, "List of Genre", genr1);

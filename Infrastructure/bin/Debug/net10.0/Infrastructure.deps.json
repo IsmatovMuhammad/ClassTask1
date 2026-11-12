@@ -11,8 +11,8 @@
           "Dapper": "2.1.89",
           "Domain": "1.0.0",
           "Npgsql": "10.0.3",
-          "Swashbuckle.AspNetCore.Swagger": "10.3.1",
-          "Swashbuckle.AspNetCore": "10.3.1"
+          "Swashbuckle.AspNetCore": "10.3.1",
+          "Swashbuckle.AspNetCore.Swagger": "10.3.1"
         },
         "runtime": {
           "Infrastructure.dll": {}
